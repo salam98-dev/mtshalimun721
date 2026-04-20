@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning & CBT MTs Halimun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden-view { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <div id="view-login" class="min-h-screen flex items-center justify-center fade-in bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-emerald-900">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Logo_Kementerian_Agama_Republik_Indonesia.png" alt="Logo Madrasah" class="w-16 h-16 mx-auto mb-3">
+                <h1 class="text-3xl font-extrabold text-emerald-700">CBT Terpadu</h1>
+                <p class="text-slate-500 font-medium">MTs Halimun</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Akses Masuk</label>
+                    <select id="role" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <option value="siswa">Siswa</option>
+                        <option value="guru">Guru Mata Pelajaran</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Username / NIS / NIP</label>
+                    <input type="text" id="username" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-lg">
+                    MASUK SISTEM
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <nav id="navbar" class="hidden-view bg-emerald-700 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="font-bold text-xl tracking-wide">MTs Halimun</span>
+                <span id="role-badge" class="bg-emerald-800 text-xs py-1 px-2 rounded-full border border-emerald-500"></span>
+            </div>
+            <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-5 py-2 rounded-lg text-sm font-bold transition shadow">Logout</button>
+        </div>
+    </nav>
+
+    <div id="view-siswa" class="hidden-view p-6 max-w-7xl mx-auto fade-in">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Selamat Datang, Siswa!</h2>
+                <p class="text-slate-500">Pilih mata pelajaran yang sedang diujikan hari ini.</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5" id="mapel-grid"></div>
+    </div>
+
+    <div id="view-ujian" class="hidden-view p-6 max-w-4xl mx-auto fade-in">
+        <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+            <div class="bg-emerald-600 p-4 text-white flex justify-between items-center">
+                <h2 id="judul-ujian" class="text-lg font-bold">Ujian Madrasah</h2>
+                <div class="bg-red-500 px-4 py-1 rounded-full font-mono font-bold animate-pulse text-lg" id="timer">
+                    90:00
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="mb-6 flex justify-between items-center border-b pb-4">
+                    <span class="font-bold text-slate-500">Soal No. <span id="nomor-soal" class="text-2xl text-slate-800">1</span> / 40</span>
+                </div>
+                <p class="text-lg text-slate-800 mb-6 leading-relaxed" id="teks-soal">
+                    Komputer pertama kali ditemukan oleh... (Contoh Soal Informatika)
+                </p>
+                <div class="space-y-3" id="opsi-jawaban">
+                    <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-emerald-50 transition w-full">
+                        <input type="radio" name="jawaban" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500">
+                        <span class="ml-3 text-slate-700">A. Charles Babbage</span>
+                    </label>
+                    <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-emerald-50 transition w-full">
+                        <input type="radio" name="jawaban" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500">
+                        <span class="ml-3 text-slate-700">B. Alan Turing</span>
+                    </label>
+                </div>
+                <div class="mt-8 flex justify-between">
+                    <button class="px-6 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-300">Kembali</button>
+                    <button onclick="selesaiUjian()" class="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Selanjutnya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-guru" class="hidden-view p-6 max-w-7xl mx-auto fade-in">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-blue-500 text-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold">Total Bank Soal</h3>
+                <p class="text-4xl font-extrabold mt-2">15</p>
+            </div>
+            <div class="bg-amber-500 text-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold">Ujian Aktif</h3>
+                <p class="text-4xl font-extrabold mt-2">3</p>
+            </div>
+            <div class="bg-emerald-500 text-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold">Selesai Ujian</h3>
+                <p class="text-4xl font-extrabold mt-2">128 Siswa</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800">Manajemen Ujian & Nilai</h2>
+                <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Buat Ujian Baru</button>
+            </div>
+            <p class="text-slate-500">Di sini Guru dapat mengunggah soal (via Spreadsheet) dan memantau nilai siswa secara real-time.</p>
+            <table class="w-full mt-4 text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 text-sm border-b">
+                        <th class="p-3">Mata Pelajaran</th>
+                        <th class="p-3">Kelas</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-3 font-medium">Informatika</td>
+                        <td class="p-3">Kelas 9</td>
+                        <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Aktif</span></td>
+                        <td class="p-3 text-blue-600 hover:underline cursor-pointer">Lihat Nilai</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="view-admin" class="hidden-view p-6 max-w-7xl mx-auto fade-in">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6">Panel Administrator Server</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow border border-slate-200">
+                <h3 class="text-lg font-bold mb-2">Manajemen Pengguna</h3>
+                <p class="text-sm text-slate-500 mb-4">Kelola data Siswa dan Guru yang dapat mengakses sistem.</p>
+                <div class="flex gap-2">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Sinkron Data Siswa</button>
+                    <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm">Reset Password</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow border border-slate-200">
+                <h3 class="text-lg font-bold mb-2">Pengaturan Ujian Madrasah</h3>
+                <p class="text-sm text-slate-500 mb-4">Atur token ujian, sesi waktu, dan kunci akses.</p>
+                <button class="bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-bold">Generate Token Hari Ini</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mapelList = [
+            "Al-Qur'an Hadis", "Akidah Akhlak", "Fikih", "SKI", "Bahasa Arab", 
+            "Matematika", "IPA", "IPS", "Bahasa Indonesia", "Bahasa Inggris", 
+            "Informatika", "Seni Budaya", "PJOK", "Prakarya", "PKn"
+        ];
+
+        // Render Mapel Siswa
+        const grid = document.getElementById('mapel-grid');
+        mapelList.forEach(m => {
+            grid.innerHTML += `
+                <div onclick="mulaiUjian('${m}')" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-lg transition flex flex-col items-center text-center cursor-pointer hover:border-emerald-500 group">
+                    <div class="w-14 h-14 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-slate-700 text-sm leading-tight">${m}</h3>
+                </div>
+            `;
+        });
+
+        // FUNGSI NAVIGASI SPA
+        function hideAllViews() {
+            document.querySelectorAll('div[id^="view-"]').forEach(el => {
+                el.classList.add('hidden-view');
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('role').value;
+            
+            hideAllViews();
+            document.getElementById('navbar').classList.remove('hidden-view');
+            document.getElementById('role-badge').innerText = `Akses: ${role.toUpperCase()}`;
+
+            if (role === 'siswa') document.getElementById('view-siswa').classList.remove('hidden-view');
+            else if (role === 'guru') document.getElementById('view-guru').classList.remove('hidden-view');
+            else if (role === 'admin') document.getElementById('view-admin').classList.remove('hidden-view');
+        }
+
+        function mulaiUjian(namaMapel) {
+            hideAllViews();
+            document.getElementById('view-ujian').classList.remove('hidden-view');
+            document.getElementById('judul-ujian').innerText = `Ujian: ${namaMapel}`;
+            // Disini logika memanggil soal dari Google Sheets nantinya
+        }
+
+        function selesaiUjian() {
+            if(confirm('Apakah Anda yakin ingin mengakhiri ujian ini?')) {
+                hideAllViews();
+                document.getElementById('view-siswa').classList.remove('hidden-view');
+                alert('Nilai telah otomatis tersimpan di server!');
+            }
+        }
+
+        function logout() {
+            hideAllViews();
+            document.getElementById('navbar').classList.add('hidden-view');
+            document.getElementById('view-login').classList.remove('hidden-view');
+            document.querySelector('form').reset();
+        }
+    </script>
+</body>
+</html>
